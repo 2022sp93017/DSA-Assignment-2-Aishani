@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 public class Main {
 
@@ -14,10 +15,10 @@ public class Main {
             }
 
             Solution solution = new Solution();
-            ArrayList<ArrayList<String>> result = solution.solveNQueens(n);
+            List<List<String>> result = solution.solveNQueens(n);
 
             System.out.println("Number of distinct solutions: " + result.size());
-            for (ArrayList<String> board : result) {
+            for (List<String> board : result) {
                 System.out.println("Solution:");
                 for (String row : board) {
                     System.out.println(row);

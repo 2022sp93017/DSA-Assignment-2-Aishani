@@ -1,48 +1,69 @@
 import java.util.ArrayList;
+import java.util.List;
+
 public class Solution {
-    public ArrayList<ArrayList<String>> solveNQueens(int a) {
-        ArrayList<ArrayList<String>> result = new ArrayList<>();
-        int[] board = new int[a];
-        solveNQueensUtil(a, 0, board, result);
+    private List<List<String>> result;
+    private int[] queens; // queens[row] represents the column position of the queen in that row
+    private boolean[] columns; // columns[i] indicates if column i is occupied
+    private boolean[] diagonals; // diagonals[i] indicates if the diagonal i is occupied
+    private boolean[] antiDiagonals; // antiDiagonals[i] indicates if the anti-diagonal i is occupied
+
+    public List<List<String>> solveNQueens(int n) {
+        result = new ArrayList<>();
+        queens = new int[n];
+        columns = new boolean[n];
+        diagonals = new boolean[2 * n - 1];
+        antiDiagonals = new boolean[2 * n - 1];
+        backtrack(0, n);
         return result;
     }
-    private void solveNQueensUtil(int A, int row, int[] board, ArrayList<ArrayList<String>> result) {
-        if (row == A) {
-            result.add(generateBoard(board));
+
+    private void backtrack(int row, int n) {
+        if (row == n) {
+            result.add(generateBoard(queens, n));
             return;
         }
 
-        for (int col = 0; col < A; col++) {
-            if (isSafe(row, col, board)) {
-                board[row] = col;
-                solveNQueensUtil(A, row + 1, board, result);
+        for (int col = 0; col < n; col++) {
+            if (isValidPlacement(row, col, n)) {
+                placeQueen(row, col, n);
+                backtrack(row + 1, n);
+                removeQueen(row, col, n);
             }
         }
     }
 
-    private boolean isSafe(int row, int col, int[] board) {
-        for (int i = 0; i < row; i++) {
-            if (board[i] == col || board[i] - col == i - row || board[i] - col == row - i) {
-                return false;
-            }
-        }
-        return true;
+    private boolean isValidPlacement(int row, int col, int n) {
+        return !columns[col] && !diagonals[row + col] && !antiDiagonals[row - col + n - 1];
     }
 
-    private ArrayList<String> generateBoard(int[] board) {
-        ArrayList<String> temp = new ArrayList<>();
-        for (int i = 0; i < board.length; i++) {
+    private void placeQueen(int row, int col, int n) {
+        queens[row] = col;
+        columns[col] = true;
+        diagonals[row + col] = true;
+        antiDiagonals[row - col + n - 1] = true;
+    }
+
+    private void removeQueen(int row, int col, int n) {
+        queens[row] = 0;
+        columns[col] = false;
+        diagonals[row + col] = false;
+        antiDiagonals[row - col + n - 1] = false;
+    }
+
+    private List<String> generateBoard(int[] queens, int n) {
+        List<String> board = new ArrayList<>();
+        for (int row = 0; row < n; row++) {
             StringBuilder sb = new StringBuilder();
-            for (int j = 0; j < board.length; j++) {
-                if (j == board[i]) {
+            for (int col = 0; col < n; col++) {
+                if (queens[row] == col) {
                     sb.append("Q");
                 } else {
                     sb.append(".");
                 }
             }
-            temp.add(sb.toString());
+            board.add(sb.toString());
         }
-        return temp;
+        return board;
     }
 }
-
